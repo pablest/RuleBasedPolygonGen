@@ -2,6 +2,7 @@ import generate_fig
 import show_figure
 import importlib
 
+#delete this 2 lines, they are used to reload the libraries if editing
 importlib.reload(generate_fig)
 importlib.reload(show_figure)
 
@@ -30,10 +31,10 @@ def rules_str_to_int_duples(rules_string):
 
 
 #Variables to draw the new polygon
-rules = [(2,0),(4,5)] #rules are defined as an array of tuples formed like (turn,multiplication)
-polygon_sides = 5
+rules = [(2,10)] #rules are defined as an array of tuples formed like (turn,multiplication)
+polygon_sides = 4
 show_construction = True
-change_colors = True
+change_colors = False
 
 #inputs to modify the variables to draw the new polygon. If None is entered, then it will use the values of the code
 first_input = input("Enter the number of sides of the regular polygon you want to modify ")

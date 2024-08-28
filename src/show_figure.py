@@ -4,10 +4,11 @@ import keyboard
 from PIL import Image
 import os
 
-#constants to control the quality of the drawing
+#constants to control the quality of the drawing and resolution
 LINE_QUALITY = cv2.LINE_4
 LINE_SIZE = 2
-MARGIN = 1/6
+MARGIN_PERCENTAGE = 1/6
+WANTED_RESOLUTION = (1200,700)
 
 class FigureShower:
 
@@ -15,8 +16,18 @@ class FigureShower:
         self.fig_name = fig_name
         self.rules_name = rules_name
 
-
+    def resize_image(self,img):
+        img_height, img_width = img.shape[:2]
+        if(img_width/img_height> WANTED_RESOLUTION[0]/WANTED_RESOLUTION[1]):
+             img = cv2.resize(img, (WANTED_RESOLUTION[0],int(WANTED_RESOLUTION[1]*img_width/img_height)), interpolation=cv2.INTER_CUBIC)
+        else:
+            img = cv2.resize(img, (int(WANTED_RESOLUTION[0]*img_height/img_width),WANTED_RESOLUTION[1]), interpolation=cv2.INTER_CUBIC)
+        return img
+    
     def show_and_destroy_image(self,img,turn = None):
+        #first resize the image to the wanted resolution
+        img = self.resize_image(img)
+
         #then we show the new figure
         cv2.imshow('Figure', img)
         self.operate_image(img,turn)
@@ -27,6 +38,8 @@ class FigureShower:
         #any key to get next drawing
         #q quit
         #s save fig 
+
+        #show the image and make the controls functional
         while True:
             key = cv2.waitKey(0)
             if key == 115: #if key ==  s
@@ -47,13 +60,12 @@ class FigureShower:
                 return
 
     def show_figure(self,pts):
-
         #first we center the points to the corner
         pts -= pts.min(axis = 0)
-        pts += np.int32(MARGIN*pts.max(axis = 0))
+        pts += np.int32(MARGIN_PERCENTAGE*pts.max(axis = 0))
 
         #then the image that have to cover all points
-        img = np.zeros((np.int32(pts[:,1].max()*(1+MARGIN)),np.int32(pts[:,0].max()*(1+MARGIN)),3), np.uint8)
+        img = np.zeros((np.int32(pts[:,1].max()*(1+MARGIN_PERCENTAGE)),np.int32(pts[:,0].max()*(1+MARGIN_PERCENTAGE)),3), np.uint8)
 
         #construct the polygon
         cv2.circle(img, pts[0], radius=3, color=(255, 255, 255), thickness=-1)
@@ -67,11 +79,11 @@ class FigureShower:
 
         #first we center the points to the corner
         pts -= pts.min(axis = 0)
-        pts += np.int32(MARGIN*pts.max(axis = 0))
+        pts += np.int32(MARGIN_PERCENTAGE*pts.max(axis = 0))
 
         #then the image that have to cover all points
-        img = np.zeros((np.int32(pts[:,1].max()*(1+MARGIN)),np.int32(pts[:,0].max()*(1+MARGIN)),3), np.uint8)
-
+        img = np.zeros((np.int32(pts[:,1].max()*(1+MARGIN_PERCENTAGE)),np.int32(pts[:,0].max()*(1+MARGIN_PERCENTAGE)),3), np.uint8)
+        
         #show construction
         cv2.circle(img, pts[0], radius=3, color=(255, 255, 255), thickness=-1)
         last_pt = pts[0]

@@ -10,7 +10,7 @@ def generate_general_increased_fig(original_pts,rules):
     patterns = {}
     for turn,multi in rules:
         patterns[turn] = multi
-        num_new_points = math.lcm(num_new_points,turn) #its the only way you cant pass it an array :(
+        num_new_points = math.lcm(num_new_points,turn) #its the only way, you cant pass it an array :(
         
     #then we calculate the new points
 
