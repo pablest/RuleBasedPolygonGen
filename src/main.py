@@ -31,8 +31,8 @@ def rules_str_to_int_duples(rules_string):
 
 
 #Variables to draw the new polygon
-rules = [(2,2)] #rules are defined as an array of tuples formed like (turn,multiplication)
-polygon_sides = 4
+rules = [(2,0)] #rules are defined as an array of tuples formed like (turn,multiplication)
+polygon_sides = 7
 show_construction = True
 change_colors = False
 
@@ -45,6 +45,10 @@ if(first_input != ""):
     show_construction = input("Do you want to see the process of construction of the polygon? y/n ").lower() == 'y'
     if(show_construction):
         change_colors = input("Do you want sides of the polygon to change color when it is being built? y/n ").lower() == 'y'
+
+if(polygon_sides <3):
+    print("polygon_sides must be a number >= 3 exiting")
+    exit()
 
 pts = generate_fig.generate_increased_polygon_fig(polygon_sides,rules) #points of the polygon, the result is an numpy array of arrays of x and y coordinates
 fig_show = show_figure.FigureShower(fig_name = str(polygon_sides),rules_name = generate_rules_name(rules))

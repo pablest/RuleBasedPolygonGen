@@ -36,7 +36,7 @@ def generate_general_increased_fig(original_pts,rules):
 
 def generate_increased_polygon_fig(n_sides,rules):
     #const for drawing a polygon
-    radius = 100
+    radius = 200
     #calculate angle between sides
     angle = 2 * np.pi / n_sides
     coordinates = []

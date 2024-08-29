@@ -5,9 +5,9 @@ from PIL import Image
 import os
 
 #constants to control the quality of the drawing and resolution
-LINE_QUALITY = cv2.LINE_4
+LINE_QUALITY = cv2.LINE_8
 LINE_SIZE = 2
-MARGIN_PERCENTAGE = 1/6
+MARGIN_PERCENTAGE = 1/8
 WANTED_RESOLUTION = (1200,700) #the wanted width and heigth, to mantain proportion, the resulting figure will have one of the width or heigth and the other meassurment will be less than the wanted
 
 class FigureShower:
@@ -71,7 +71,6 @@ class FigureShower:
         img = np.zeros((np.int32(pts[:,1].max()*(1+MARGIN_PERCENTAGE)),np.int32(pts[:,0].max()*(1+MARGIN_PERCENTAGE)),3), np.uint8)
 
         #construct the polygon
-        cv2.circle(img, pts[0], radius=3, color=(255, 255, 255), thickness=-1)
         cv2.polylines(img,np.array([pts]),False,(0,255,255),LINE_SIZE,LINE_QUALITY)
 
         #show the image
@@ -88,7 +87,6 @@ class FigureShower:
         img = np.zeros((np.int32(pts[:,1].max()*(1+MARGIN_PERCENTAGE)),np.int32(pts[:,0].max()*(1+MARGIN_PERCENTAGE)),3), np.uint8)
         
         #show construction
-        cv2.circle(img, pts[0], radius=3, color=(255, 255, 255), thickness=-1)
         last_pt = pts[0]
         print("Figure will be generated in another window\nPress q to quit, s to save the figure, and any other key to draw the next side")
 
@@ -99,18 +97,16 @@ class FigureShower:
             else:
                 cv2.polylines(img,np.array([[last_pt,pts[turn]]]),False,(0,255,255),LINE_SIZE,LINE_QUALITY)
 
-            #Put the TURN text
-            cv2.putText(img,f"Turn {turn}", (25,25),cv2.FONT_HERSHEY_SIMPLEX,1, (255,255,255), 1, cv2.LINE_AA)
-
             #resize the image
             resized_img = self.resize_image(img)
 
+            #Put the TURN text
+            texted_img = resized_img.copy()
+            cv2.putText(texted_img,f"Turn {turn}", (25,25),cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255), 1, cv2.LINE_AA)
+
             #show and let the user operate the image
-            cv2.imshow('Figure', resized_img)
-            self.operate_image(resized_img,f"Turn_{turn}")
+            cv2.imshow('Figure', texted_img)
+            self.operate_image(texted_img,f"Turn_{turn}")
             last_pt = pts[turn]
 
-            #after showing, we delete the TURN text
-            cv2.putText(img,f"Turn {turn}", (25,25),cv2.FONT_HERSHEY_SIMPLEX,1, (0,0,0), 1, cv2.LINE_AA)
-
-        self.show_and_destroy_image(resized_img,"Final_turn")
+        self.show_and_destroy_image(texted_img,"Final_turn")
