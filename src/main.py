@@ -31,7 +31,7 @@ def rules_str_to_int_duples(rules_string):
 
 
 #Variables to draw the new polygon
-rules = [(2,0)] #rules are defined as an array of tuples formed like (turn,multiplication)
+rules = [(6,0),(2,2)] #rules are defined as an array of tuples formed like (turn,multiplication)
 polygon_sides = 7
 show_construction = True
 change_colors = False
