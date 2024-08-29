@@ -8,7 +8,7 @@ import os
 LINE_QUALITY = cv2.LINE_4
 LINE_SIZE = 2
 MARGIN_PERCENTAGE = 1/6
-WANTED_RESOLUTION = (1200,700)
+WANTED_RESOLUTION = (1200,700) #the wanted width and heigth, to mantain proportion, the resulting figure will have one of the width or heigth and the other meassurment will be less than the wanted
 
 class FigureShower:
 
@@ -17,11 +17,14 @@ class FigureShower:
         self.rules_name = rules_name
 
     def resize_image(self,img):
+        #function to resize the image to the wanted width and heigth, 
+        #to mantain proportion, the resulting figure will have one of the width or heigth and the other meassurment will be less than the wanted
+
         img_height, img_width = img.shape[:2]
-        if(img_width/img_height> WANTED_RESOLUTION[0]/WANTED_RESOLUTION[1]):
-             img = cv2.resize(img, (WANTED_RESOLUTION[0],int(WANTED_RESOLUTION[1]*img_width/img_height)), interpolation=cv2.INTER_CUBIC)
+        if(img_width/img_height > WANTED_RESOLUTION[0]/WANTED_RESOLUTION[1]):
+             img = cv2.resize(img, (WANTED_RESOLUTION[0],int(img_height*WANTED_RESOLUTION[0]/img_width)), interpolation=cv2.INTER_CUBIC)
         else:
-            img = cv2.resize(img, (int(WANTED_RESOLUTION[0]*img_height/img_width),WANTED_RESOLUTION[1]), interpolation=cv2.INTER_CUBIC)
+            img = cv2.resize(img, (int(img_width*WANTED_RESOLUTION[1]/img_height),WANTED_RESOLUTION[1]), interpolation=cv2.INTER_CUBIC)
         return img
     
     def show_and_destroy_image(self,img,turn = None):
@@ -96,13 +99,18 @@ class FigureShower:
             else:
                 cv2.polylines(img,np.array([[last_pt,pts[turn]]]),False,(0,255,255),LINE_SIZE,LINE_QUALITY)
 
-            #Let the user do whateverer it wants
+            #Put the TURN text
             cv2.putText(img,f"Turn {turn}", (25,25),cv2.FONT_HERSHEY_SIMPLEX,1, (255,255,255), 1, cv2.LINE_AA)
-            cv2.imshow('Figure', img)
-            self.operate_image(img,f"Turn_{turn}")
+
+            #resize the image
+            resized_img = self.resize_image(img)
+
+            #show and let the user operate the image
+            cv2.imshow('Figure', resized_img)
+            self.operate_image(resized_img,f"Turn_{turn}")
             last_pt = pts[turn]
 
             #after showing, we delete the TURN text
             cv2.putText(img,f"Turn {turn}", (25,25),cv2.FONT_HERSHEY_SIMPLEX,1, (0,0,0), 1, cv2.LINE_AA)
 
-        self.show_and_destroy_image(img,"Final_turn")
+        self.show_and_destroy_image(resized_img,"Final_turn")
